@@ -1,0 +1,14 @@
+version: '3.9'
+services:
+  mysql:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    container_name: bc_mysql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: true
+      MYSQL_DATABASE: bearcar_api
+      MYSQL_USER: admin
+    volumes:
+      - /data/mysql:/var/lib/mysql
+    ports:
+      - '3306:3306'
