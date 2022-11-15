@@ -7,8 +7,20 @@ const { addSchemas } = require('./lib/validation');
 // Pass --options via CLI arguments in command to enable these options.
 module.exports.options = {};
 
+const WHITE_LIST = ['/sign-up'];
+
 module.exports = async function (app, opts) {
+  // validation
   await addSchemas(app);
+  // auth
+  app.addHook('onRequest', async (request, reply) => {
+    try {
+      if (!WHITE_LIST.includes(request.url)) await request.jwtVerify();
+    } catch (err) {
+      reply.send(err);
+    }
+  });
+  // error handler
   app.setErrorHandler(function (error, request, reply) {
     // Log error
     this.log.error(error);
