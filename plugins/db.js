@@ -2,10 +2,16 @@
 
 const fp = require('fastify-plugin');
 const { connect } = require('../lib/db');
+const { Users, AuthTokens } = require('../lib/db/models');
 
 const connector = async app => {
-  const db = connect;
-  app.decorate('knex', db);
+  const knex = connect;
+  const models = {
+    Users: new Users(knex),
+    AuthTokens: new AuthTokens(knex)
+  };
+  app.decorate('knex', knex);
+  app.decorate('models', models);
 };
 
 module.exports = fp(connector);

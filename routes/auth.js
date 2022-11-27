@@ -1,23 +1,26 @@
 'use strict';
 
-const { randomUUID } = require('node:crypto');
 const { hash, verify } = require('../lib/hash');
-const { AuthService } = require('./auth-service');
 const { getConfig } = require('../lib/config');
 
 module.exports = async function (app, opts) {
-  const service = new AuthService(app);
-  const { expiresAt } = getConfig('jwt');
+  const {
+    models: { AuthTokens, Users }
+  } = app;
 
   const createJwtTokens = async userId => {
+    const { expiresIn } = getConfig('jwt');
+    const TOKEN_EXPIRATION_MONTHS = 6;
+    const date = new Date();
+    date.setMonth(date.getMonth() + TOKEN_EXPIRATION_MONTHS);
+    const expiredAt = date.toISOString().slice(0, 19).replace('T', ' ');
     const token = await app.jwt.sign(
       {
         userId
       },
-      { expiresIn: expiresAt }
+      { expiresIn }
     );
-    const refreshToken = randomUUID();
-    await service.createAuthToken(refreshToken, userId);
+    const refreshToken = await AuthTokens.create({ refreshToken, userId, expiredAt });
     return { token, refreshToken };
   };
 
@@ -25,9 +28,8 @@ module.exports = async function (app, opts) {
     async handler(request, reply) {
       const body = request.body;
       const hashedPassword = await hash(body.password);
-      const userId = await service.createUser({ ...body, password: hashedPassword });
+      const userId = await Users.create({ ...body, password: hashedPassword });
       const { token, refreshToken } = await createJwtTokens(userId);
-      await service.createAuthToken(refreshToken, userId);
       reply.setCookie('token', token, {
         path: '/'
       });
@@ -42,7 +44,7 @@ module.exports = async function (app, opts) {
   app.post('/sign-in', {
     async handler(request, reply) {
       const { email, password } = request.body;
-      const user = await service.findUser(email);
+      const user = await Users.knexQuery().where({ email }).first();
       if (!user) reply.notFound();
       const [_, userPassword] = user.password.split(':');
       await verify(password, userPassword).catch(() =>
@@ -63,11 +65,11 @@ module.exports = async function (app, opts) {
   app.post('/refresh', {
     async handler(request, reply) {
       const { refreshToken } = request.body;
-      const { userId } = await service.findRefreshToken(refreshToken);
+      const { userId } = await AuthTokens.findOne(refreshToken);
       if (!userId) {
         reply.notFound();
       }
-      await service.removeRefreshToken(refreshToken);
+      await AuthTokens.remove(refreshToken);
       reply.statusCode = 201;
       return await createJwtTokens(userId);
     },
