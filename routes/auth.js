@@ -77,6 +77,13 @@ module.exports = async function (app, opts) {
       }
       await AuthTokens.remove(refreshToken);
       const tokens = await createJwtTokens(userId);
+      reply.setCookie('token', tokens.token, {
+        path: '/'
+      });
+      reply.setCookie('refreshToken', tokens.refreshToken, {
+        path: '/'
+      });
+
       reply.statusCode = 201;
       reply.send(tokens);
     },
