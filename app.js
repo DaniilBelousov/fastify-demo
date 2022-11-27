@@ -24,11 +24,8 @@ module.exports = async function (app, opts) {
     }
   });
   // error handler
-  app.setErrorHandler(function (error, request, reply) {
-    // Log error
-    this.log.error(error);
-    // Send error response
-    reply.status(500).send({ message: error });
+  app.setErrorHandler(function (error, _, reply) {
+    reply.send(error);
   });
   // Do not touch the following lines
 

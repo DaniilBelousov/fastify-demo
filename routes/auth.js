@@ -20,13 +20,17 @@ module.exports = async function (app, opts) {
       },
       { expiresIn }
     );
-    const refreshToken = await AuthTokens.create({ refreshToken, userId, expiredAt });
+    const refreshToken = await AuthTokens.create({ userId, expiredAt });
     return { token, refreshToken };
   };
 
   app.post('/sign-up', {
     async handler(request, reply) {
       const body = request.body;
+      const user = await Users.knexQuery().where({ email: body.email }).first();
+      if (user) {
+        return reply.badRequest('User already exists');
+      }
       const hashedPassword = await hash(body.password);
       const userId = await Users.create({ ...body, password: hashedPassword });
       const { token, refreshToken } = await createJwtTokens(userId);
@@ -37,6 +41,7 @@ module.exports = async function (app, opts) {
         path: '/'
       });
       reply.statusCode = 201;
+      reply.send({ status: 'OK' });
     },
     schema: app.getSchema('sign-up')
   });
@@ -45,11 +50,11 @@ module.exports = async function (app, opts) {
     async handler(request, reply) {
       const { email, password } = request.body;
       const user = await Users.knexQuery().where({ email }).first();
-      if (!user) reply.notFound();
-      const [_, userPassword] = user.password.split(':');
-      await verify(password, userPassword).catch(() =>
-        reply.badRequest('Incorrect password')
-      );
+      if (!user) {
+        return reply.notFound();
+      }
+      const isValid = await verify(password, user.password);
+      if (!isValid) return reply.badRequest('Incorrect password');
       const { token, refreshToken } = await createJwtTokens(user.id);
       reply.setCookie('token', token, {
         path: '/'
@@ -58,6 +63,7 @@ module.exports = async function (app, opts) {
         path: '/'
       });
       reply.statusCode = 201;
+      reply.send({ status: 'OK' });
     },
     schema: app.getSchema('sign-in')
   });
@@ -67,11 +73,12 @@ module.exports = async function (app, opts) {
       const { refreshToken } = request.body;
       const { userId } = await AuthTokens.findOne(refreshToken);
       if (!userId) {
-        reply.notFound();
+        return reply.notFound();
       }
       await AuthTokens.remove(refreshToken);
+      const tokens = await createJwtTokens(userId);
       reply.statusCode = 201;
-      return await createJwtTokens(userId);
+      reply.send(tokens);
     },
     schema: app.getSchema('refresh')
   });
