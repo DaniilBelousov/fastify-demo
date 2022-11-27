@@ -71,9 +71,13 @@ module.exports = async function (app, opts) {
   app.post('/refresh', {
     async handler(request, reply) {
       const { refreshToken } = request.body;
-      const { userId } = await AuthTokens.findOne(refreshToken);
+      const { userId, expiredAt } = (await AuthTokens.findOne(refreshToken)) || {};
+      const now = new Date();
       if (!userId) {
         return reply.notFound();
+      }
+      if (!now > new Date(expiredAt)) {
+        return reply.badRequest('Refresh token has been expired');
       }
       await AuthTokens.remove(refreshToken);
       const tokens = await createJwtTokens(userId);
@@ -83,7 +87,6 @@ module.exports = async function (app, opts) {
       reply.setCookie('refreshToken', tokens.refreshToken, {
         path: '/'
       });
-
       reply.statusCode = 201;
       reply.send(tokens);
     },
