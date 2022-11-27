@@ -3,21 +3,24 @@
 const path = require('path');
 const AutoLoad = require('@fastify/autoload');
 const { addSchemas } = require('./lib/validation');
+const { WHITE_LIST } = require('./lib/constants');
 
 // Pass --options via CLI arguments in command to enable these options.
 module.exports.options = {};
-
-const WHITE_LIST = ['/sign-up'];
 
 module.exports = async function (app, opts) {
   // validation
   await addSchemas(app);
   // auth
-  app.addHook('onRequest', async (request, reply) => {
+  app.addHook('preParsing', async (request, reply) => {
     try {
-      if (!WHITE_LIST.includes(request.url)) await request.jwtVerify();
+      if (!WHITE_LIST.includes(request.url)) {
+        const { userId } = await request.jwtVerify();
+        request.userId = userId;
+      }
     } catch (err) {
-      reply.send(err);
+      console.log(err);
+      reply.unauthorized();
     }
   });
   // error handler

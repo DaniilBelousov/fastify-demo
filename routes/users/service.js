@@ -1,31 +1,22 @@
 'use strict';
-const { randomUUID } = require('node:crypto');
 
-module.exports = class UsersService {
+const { randomUUID } = require('node:crypto');
+const { TABLE_USERS } = require('../../lib/constants');
+const CommonService = require('../../lib/service');
+
+module.exports = class UsersService extends CommonService {
   constructor(app) {
-    if (!app.ready) throw new Error(`No Fastify set up`);
-    this.app = app;
-    const { knex } = this.app;
-    if (!knex) {
-      throw new Error(`No Knex set up!`);
-    }
-    this.table = 'Users';
+    super(app);
   }
 
   async create(userData) {
-    const {
-      app: { knex },
-      table
-    } = this;
+    const Users = this.knex(TABLE_USERS);
     const id = randomUUID();
-    await knex(table).insert({ id, ...userData });
+    await Users.insert({ id, ...userData });
   }
 
   async getList() {
-    const {
-      app: { knex },
-      table
-    } = this;
-    return knex(table).select('*');
+    const Users = this.knex(TABLE_USERS);
+    return Users.select('*');
   }
 };

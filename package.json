@@ -12,6 +12,7 @@
     "start": "fastify start -l info app.js",
     "start-db": "docker compose rm -f && docker compose pull && docker compose up --build -d",
     "db-up": "knex migrate:up",
+    "db-make-migration": "knex migrate:make",
     "dev": "fastify start -w -l info -P app.js",
     "prepare": "husky install"
   },
@@ -20,6 +21,7 @@
   "license": "ISC",
   "dependencies": {
     "@fastify/autoload": "^5.0.0",
+    "@fastify/cookie": "^8.3.0",
     "@fastify/jwt": "^6.3.3",
     "@fastify/sensible": "^5.0.0",
     "fastify": "^4.0.0",
