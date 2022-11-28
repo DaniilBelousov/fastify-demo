@@ -8,7 +8,11 @@ module.exports = async function (app, _) {
   app.get('/', {
     async handler(request, reply) {
       const userId = request.userId;
-      const rides = await Rides.knexQuery().select('*').where({ userId });
+      const rides = await Rides.findMany({
+        where: { userId },
+        select: '*',
+        orderBy: ['date', 'desc']
+      });
       reply.statusCode = 200;
       reply.send(rides);
     },
