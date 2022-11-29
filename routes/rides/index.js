@@ -4,9 +4,6 @@ const { Service } = require('./service');
 
 module.exports = async function (app, _) {
   const service = new Service(app);
-  const {
-    models: { Rides }
-  } = app;
 
   app.get('/', {
     async handler(request, reply) {

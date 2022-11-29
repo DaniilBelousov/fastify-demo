@@ -24,11 +24,14 @@ class Service {
   }
 
   async find(userId) {
-    return await Rides.findMany({
-      where: { userId },
-      select: '*',
-      orderBy: ['date', 'desc']
-    });
+    return this.Rides.findMany(
+      {
+        where: { userId },
+        select: '*',
+        orderBy: ['date', 'desc']
+      },
+      { pagination: true }
+    );
   }
 }
 
