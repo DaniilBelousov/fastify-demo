@@ -1,18 +1,16 @@
 'use strict';
 
+const { Service } = require('./service');
+
 module.exports = async function (app, _) {
+  const service = new Service(app);
   const {
     models: { Rides }
   } = app;
 
   app.get('/', {
     async handler(request, reply) {
-      const userId = request.userId;
-      const rides = await Rides.findMany({
-        where: { userId },
-        select: '*',
-        orderBy: ['date', 'desc']
-      });
+      const rides = await service.find(request.userId);
       reply.statusCode = 200;
       reply.send(rides);
     },
@@ -21,18 +19,7 @@ module.exports = async function (app, _) {
 
   app.post('/', {
     async handler(request, reply) {
-      const { date, options, payment, ...body } = request.body;
-      const nextDate = date.slice(0, 19).replace('T', ' ');
-      const userId = request.userId;
-      const nextOptions = JSON.stringify(options);
-      const nextPayment = JSON.stringify(payment);
-      await Rides.create({
-        ...body,
-        date: nextDate,
-        userId,
-        options: nextOptions,
-        payment: nextPayment
-      });
+      await service.create(request.body);
       reply.statusCode = 201;
       reply.send({ status: 'OK' });
     },
