@@ -23,15 +23,8 @@ class Service {
     });
   }
 
-  async find(userId) {
-    return this.Rides.findMany(
-      {
-        where: { userId },
-        select: '*',
-        orderBy: ['date', 'desc']
-      },
-      { pagination: true }
-    );
+  async find(query) {
+    return this.Rides.findMany(query, { pagination: true });
   }
 }
 
