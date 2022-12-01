@@ -1,5 +1,7 @@
 'use strict';
 
+const { TABLE_USERS, TABLE_RIDES } = require('../../lib/constants');
+
 class Service {
   constructor(app) {
     this.app = app;
@@ -24,7 +26,21 @@ class Service {
   }
 
   async find(query) {
-    return this.Rides.findMany(query, { pagination: true });
+    const USERS_ID = `${TABLE_USERS}.id`;
+    const RIDES_USER_ID = `${TABLE_RIDES}.userId`;
+    return this.Rides.findMany(
+      {
+        ...query,
+        select: [
+          `${TABLE_RIDES}.*`,
+          `${TABLE_USERS}.id as userId`,
+          `${TABLE_USERS}.name`,
+          `${TABLE_USERS}.lastName`
+        ],
+        join: [TABLE_USERS, USERS_ID, RIDES_USER_ID]
+      },
+      { pagination: true }
+    );
   }
 }
 
