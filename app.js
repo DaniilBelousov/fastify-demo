@@ -3,6 +3,7 @@
 const path = require('path');
 const AutoLoad = require('@fastify/autoload');
 const { addSchemas } = require('./lib/validation');
+const { CommonError } = require('./lib/errors');
 const { WHITE_LIST } = require('./lib/constants');
 
 // Pass --options via CLI arguments in command to enable these options.
@@ -25,6 +26,13 @@ module.exports = async function (app, opts) {
   });
   // error handler
   app.setErrorHandler(function (error, _, reply) {
+    console.log('App Error:', error);
+    const statusCode = error.statusCode || 500;
+    reply.statusCode = statusCode;
+    if (statusCode === 500) {
+      const systemError = new CommonError();
+      reply.send(systemError);
+    }
     reply.send(error);
   });
   // Do not touch the following lines

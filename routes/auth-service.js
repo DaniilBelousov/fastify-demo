@@ -2,6 +2,7 @@
 
 const { hash, verify } = require('../lib/hash');
 const { getConfig } = require('../lib/config');
+const { NotFound, Forbidden } = require('../lib/errors');
 
 class AuthService {
   constructor(app) {
@@ -18,9 +19,7 @@ class AuthService {
     const { email, password } = userData;
     const user = await this.Users.findMany({ where: { email }, first: true });
     console.log(user);
-    if (user) {
-      throw Error('User already exists');
-    }
+    if (user) throw new Forbidden('User already exists');
     const hashedPassword = await hash(password);
     const userId = await this.Users.create({ ...userData, password: hashedPassword });
     return await this.#createJwtTokens(userId);
@@ -28,17 +27,17 @@ class AuthService {
 
   async signIn({ email, password }) {
     const user = await this.Users.knexQuery().where({ email }).first();
-    if (!user) throw Error('User not found');
+    if (!user) throw new NotFound('User not found');
     const isValid = await verify(password, user.password);
-    if (!isValid) throw Error('Incorrect password');
+    if (!isValid) throw new Forbidden('Incorrect password');
     return await this.#createJwtTokens(user.id);
   }
 
   async refresh({ refreshToken }) {
     const { userId, expiredAt } = (await this.AuthTokens.findOne(refreshToken)) || {};
     const now = new Date();
-    if (!userId) throw Error('User not found');
-    if (now > new Date(expiredAt)) throw Error('Refresh token has been expired');
+    if (!userId) throw new NotFound('User not found');
+    if (now > new Date(expiredAt)) throw new Forbidden('Refresh token has been expired');
     await this.AuthTokens.remove(refreshToken);
     return await this.#createJwtTokens(userId);
   }
