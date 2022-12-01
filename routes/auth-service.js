@@ -7,7 +7,6 @@ const { NotFound, Forbidden } = require('../lib/errors');
 class AuthService {
   constructor(app) {
     this.app = app;
-    console.log('init');
     const {
       models: { Users, AuthTokens }
     } = this.app;
@@ -18,7 +17,6 @@ class AuthService {
   async signUp(userData) {
     const { email, password } = userData;
     const user = await this.Users.findMany({ where: { email }, first: true });
-    console.log(user);
     if (user) throw new Forbidden('User already exists');
     const hashedPassword = await hash(password);
     const userId = await this.Users.create({ ...userData, password: hashedPassword });

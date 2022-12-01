@@ -5,7 +5,7 @@
  */
 
 const { MYSQL_DATABASE, MYSQL_HOST, MYSQL_PORT, MYSQL_USER } = process.env;
-console.log({ MYSQL_DATABASE, MYSQL_HOST, MYSQL_PORT, MYSQL_USER });
+
 module.exports = {
   development: {
     client: 'mysql',

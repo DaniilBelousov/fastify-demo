@@ -3,7 +3,7 @@
 const path = require('path');
 const AutoLoad = require('@fastify/autoload');
 const { addSchemas } = require('./lib/validation');
-const { CommonError } = require('./lib/errors');
+const { CommonError, Unauthorized } = require('./lib/errors');
 const { WHITE_LIST } = require('./lib/constants');
 
 // Pass --options via CLI arguments in command to enable these options.
@@ -19,9 +19,11 @@ module.exports = async function (app, opts) {
         const { userId } = await request.jwtVerify();
         request.userId = userId;
       }
-    } catch (err) {
-      console.log(err);
-      reply.unauthorized();
+    } catch (error) {
+      console.log('Auth Error:', error);
+      const unauthorizedError = new Unauthorized();
+      reply.statusCode = unauthorizedError.statusCode;
+      reply.send(unauthorizedError);
     }
   });
   // error handler
