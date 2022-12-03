@@ -34,8 +34,9 @@ module.exports = async function (app, opts) {
     if (statusCode === 500) {
       const systemError = new CommonError();
       reply.send(systemError);
+    } else {
+      reply.send(error);
     }
-    reply.send(error);
   });
   // Do not touch the following lines
 
