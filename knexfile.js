@@ -4,17 +4,19 @@
  * @type { Object.<string, import("knex").Knex.Config> }
  */
 
-const { MYSQL_DATABASE, MYSQL_HOST, MYSQL_PORT, MYSQL_USER } = process.env;
+const { getConfig } = require('./lib/config');
+
+const { database, user, host, port } = getConfig('db');
 
 module.exports = {
   development: {
     client: 'mysql',
     connection: {
-      database: MYSQL_DATABASE,
-      user: MYSQL_USER,
+      database,
+      user,
       password: '',
-      host: MYSQL_HOST,
-      port: MYSQL_PORT
+      host,
+      port
     },
     migrations: {
       directory: './lib/db/migrations'

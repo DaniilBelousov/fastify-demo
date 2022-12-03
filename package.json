@@ -8,10 +8,10 @@
     "test": "test"
   },
   "scripts": {
-    "test": "tap \"test/**/*.test.js\"",
+    "test": "STAGE=test jest --coverage  ./test",
     "start": "fastify start -l info app.js",
     "start-db": "docker compose rm -f && docker compose pull && docker compose up --build -d",
-    "db-up": "knex migrate:up",
+    "db-up": "STAGE=test knex migrate:up",
     "db-make-migration": "knex migrate:make",
     "dev": "fastify start -w -l info -P app.js",
     "prepare": "husky install"
@@ -32,6 +32,8 @@
   },
   "devDependencies": {
     "husky": ">=6",
+    "jest": "^29.3.1",
+    "jest-environment-node": "^29.3.1",
     "lint-staged": "^13.0.3",
     "prettier": "^2.7.1"
   },

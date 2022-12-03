@@ -5,9 +5,12 @@ const AutoLoad = require('@fastify/autoload');
 const { addSchemas } = require('./lib/validation');
 const { CommonError, Unauthorized } = require('./lib/errors');
 const { WHITE_LIST } = require('./lib/constants');
+const { onTestEnd } = require('./lib/test-env');
 
 // Pass --options via CLI arguments in command to enable these options.
 module.exports.options = {};
+
+const { STAGE } = process.env;
 
 module.exports = async function (app, opts) {
   // validation
@@ -26,6 +29,9 @@ module.exports = async function (app, opts) {
       reply.send(unauthorizedError);
     }
   });
+  if (STAGE === 'test') {
+    app.addHook('onClose', async app => onTestEnd(app));
+  }
   // error handler
   app.setErrorHandler(function (error, _, reply) {
     console.log('App Error:', error);
