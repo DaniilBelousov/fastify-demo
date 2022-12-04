@@ -49,7 +49,7 @@ module.exports = async function (app, opts) {
         path: '/'
       });
       reply.statusCode = 201;
-      reply.send(tokens);
+      reply.send({ status: 'OK' });
     },
     schema: app.getSchema('refresh')
   });
