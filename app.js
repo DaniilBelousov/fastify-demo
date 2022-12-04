@@ -3,9 +3,10 @@
 const path = require('path');
 const AutoLoad = require('@fastify/autoload');
 const { addSchemas } = require('./lib/validation');
-const { CommonError, Unauthorized } = require('./lib/errors');
+const { Unauthorized } = require('./lib/errors');
 const { WHITE_LIST } = require('./lib/constants');
 const { onTestEnd } = require('./lib/test-env');
+const { handleAppError } = require('./lib/errors');
 
 // Pass --options via CLI arguments in command to enable these options.
 module.exports.options = {};
@@ -33,17 +34,7 @@ module.exports = async function (app, opts) {
     app.addHook('onClose', async app => onTestEnd(app));
   }
   // error handler
-  app.setErrorHandler(function (error, _, reply) {
-    console.log('App Error:', error);
-    const statusCode = error.statusCode || 500;
-    reply.statusCode = statusCode;
-    if (statusCode === 500) {
-      const systemError = new CommonError();
-      reply.send(systemError);
-    } else {
-      reply.send(error);
-    }
-  });
+  app.setErrorHandler(handleAppError);
   // Do not touch the following lines
 
   // This loads all plugins defined in plugins
