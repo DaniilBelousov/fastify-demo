@@ -30,7 +30,7 @@ class AuthService {
   }
 
   async signIn({ email, password }) {
-    const user = await this.Users.knexQuery().where({ email }).first();
+    const user = await this.Users.findMany({ where: { email }, first: true });
     if (!user) throw new NotFound(MESSAGE_USER_NOT_FOUND);
     const isValid = await verify(password, user.password);
     if (!isValid) throw new Forbidden(MESSAGE_INCORRECT_PASSWORD);
