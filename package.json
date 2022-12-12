@@ -8,7 +8,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "STAGE=test jest --coverage ./test",
+    "test": "STAGE=test jest --coverage --runInBand ./test",
     "start": "fastify start -l info app.js",
     "start-db": "docker compose rm -f && docker compose pull && docker compose up --build -d",
     "db-up": "STAGE=test knex migrate:up",
