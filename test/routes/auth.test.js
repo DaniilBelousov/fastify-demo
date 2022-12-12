@@ -9,9 +9,9 @@ const {
   CODE_INVALID_EMAIL,
   TABLE_USERS,
   TABLE_AUTH_TOKENS
-} = require('../lib/constants');
-const { hash } = require('../lib/hash');
-const { MockService } = require('../lib/test-env');
+} = require('../../lib/constants');
+const { hash } = require('../../lib/hash');
+const { MockService } = require('../../lib/test-env');
 
 const app = globalThis.app;
 
