@@ -20,7 +20,12 @@ module.exports = {
   collectCoverage: true,
 
   // An array of glob patterns indicating a set of files for which coverage information should be collected
-  collectCoverageFrom: ['./lib/**/*.js', './plugins/**/*.js', './routes/**/*.js'],
+  collectCoverageFrom: [
+    './lib/**/*.js',
+    './plugins/**/*.js',
+    './routes/**/*.js',
+    './app.js'
+  ],
 
   // The directory where Jest should output its coverage files
   coverageDirectory: 'coverage',
@@ -32,7 +37,7 @@ module.exports = {
     '/lib/db/migrations/',
     '/lib/validation/schemas/',
     '/lib/hooks/transform-query/schemas/'
-  ],
+  ]
 
   // A list of reporter names that Jest uses when writing coverage reports
   // coverageReporters: [
@@ -64,10 +69,10 @@ module.exports = {
   // forceCoverageMatch: [],
 
   // A path to a module which exports an async function that is triggered once before all test suites
-  globalSetup: './jest-setup.js',
+  // globalSetup: './jest-setup.js',
 
   // A path to a module which exports an async function that is triggered once after all test suites
-  globalTeardown: './jest-teardown.js'
+  // globalTeardown: './jest-teardown.js'
 
   // A set of global variables that need to be available in all test environments
   // globals: {},

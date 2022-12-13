@@ -11,9 +11,9 @@ const {
   TABLE_AUTH_TOKENS
 } = require('../../lib/constants');
 const { hash } = require('../../lib/hash');
-const { MockService } = require('../../lib/test-env');
+const { MockService, initTestApp } = require('../../lib/test-env');
 
-const app = globalThis.app;
+let app;
 
 const getValue = str => {
   const [_, value] = str.split('=');
@@ -28,6 +28,7 @@ const TEST_REFRESH = 'TEST_REFRESH_TOKEN';
 let mockData = {};
 
 beforeAll(async () => {
+  app = await initTestApp();
   const service = new MockService(app);
   const password = await hash(TEST_PASSWORD);
   const expiredAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
@@ -73,6 +74,10 @@ beforeAll(async () => {
     }
   ];
   mockData = await service.mockDbData(mock);
+});
+
+afterAll(async () => {
+  await app.close();
 });
 
 describe('/sign-up:', () => {
