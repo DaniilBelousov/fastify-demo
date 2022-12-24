@@ -12,9 +12,10 @@
     "start": "fastify start -l info app.js",
     "start-db": "docker compose rm -f && docker compose pull && docker compose up --build -d",
     "db-up": "STAGE=test knex migrate:up",
-    "db-make-migration": "knex migrate:make",
+    "db-make-migration": "knex migrate:latest",
     "dev": "fastify start -w -l info -P app.js",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "deploy-api-gw": "fastify start ./scripts/api-gateway.js"
   },
   "keywords": [],
   "author": "",
@@ -28,11 +29,13 @@
     "fastify-cli": "^5.5.1",
     "fastify-plugin": "^4.0.0",
     "knex": "^2.3.0",
-    "mysql": "^2.18.1"
+    "mysql2": "^2.3.3"
   },
   "devDependencies": {
+    "@fastify/swagger": "^8.2.1",
     "husky": ">=6",
     "jest": "^29.3.1",
+    "js-yaml": "^4.1.0",
     "lint-staged": "^13.0.3",
     "prettier": "^2.7.1"
   },

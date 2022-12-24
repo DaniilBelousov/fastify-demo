@@ -6,7 +6,7 @@ const { transformQuery } = require('../../lib/hooks');
 module.exports = async function (app, _) {
   const service = new Service(app);
 
-  app.get('/', {
+  app.get('', {
     async handler(request, reply) {
       const rides = await service.find(request.sqlQuery);
       reply.statusCode = 200;
@@ -16,7 +16,7 @@ module.exports = async function (app, _) {
     preHandler: transformQuery('rides-query')
   });
 
-  app.post('/', {
+  app.post('', {
     async handler(request, reply) {
       const { userId, body } = request;
       await service.create(userId, body);

@@ -5,7 +5,7 @@ module.exports = async function (app, _) {
     models: { Users }
   } = app;
 
-  app.get('/', {
+  app.get('', {
     async handler(request, reply) {
       const users = await Users.knexQuery().select('*');
       reply.statusCode = 200;

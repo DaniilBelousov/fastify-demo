@@ -1,0 +1,55 @@
+openapi: 3.0.3
+info:
+  title: tEST
+  description: TEST
+  version: '1'
+components:
+  schemas: {}
+paths:
+  /sign-up:
+    post:
+      x-yc-apigateway-integration:
+        type: serverless_containers
+        container_id: bbag27gdge2s0itjora7
+        service_account_id: ajeco9rh82sgukcdhbe4
+        http_headers:
+          Content-Type: application/json
+  /sign-in:
+    post:
+      x-yc-apigateway-integration:
+        type: serverless_containers
+        container_id: bbag27gdge2s0itjora7
+        service_account_id: ajeco9rh82sgukcdhbe4
+        http_headers:
+          Content-Type: application/json
+  /refresh:
+    post:
+      x-yc-apigateway-integration:
+        type: serverless_containers
+        container_id: bbag27gdge2s0itjora7
+        service_account_id: ajeco9rh82sgukcdhbe4
+        http_headers:
+          Content-Type: application/json
+  /rides:
+    get:
+      x-yc-apigateway-integration:
+        type: serverless_containers
+        container_id: bbag27gdge2s0itjora7
+        service_account_id: ajeco9rh82sgukcdhbe4
+        http_headers:
+          Content-Type: application/json
+    post:
+      x-yc-apigateway-integration:
+        type: serverless_containers
+        container_id: bbag27gdge2s0itjora7
+        service_account_id: ajeco9rh82sgukcdhbe4
+        http_headers:
+          Content-Type: application/json
+  /users:
+    get:
+      x-yc-apigateway-integration:
+        type: serverless_containers
+        container_id: bbag27gdge2s0itjora7
+        service_account_id: ajeco9rh82sgukcdhbe4
+        http_headers:
+          Content-Type: application/json
