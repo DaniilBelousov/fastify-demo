@@ -6,17 +6,18 @@
 
 const { getConfig } = require('./lib/config');
 
-const { database, user, host, port } = getConfig('db');
+const { database, user, host, port, password, ssl } = getConfig('db');
 
 module.exports = {
   development: {
-    client: 'mysql',
+    client: 'mysql2',
     connection: {
       database,
       user,
-      password: '',
+      password,
       host,
-      port
+      port,
+      ssl
     },
     migrations: {
       directory: './lib/db/migrations'
