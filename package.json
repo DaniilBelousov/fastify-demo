@@ -10,12 +10,15 @@
   "scripts": {
     "test": "STAGE=test jest --coverage --runInBand ./test",
     "start": "fastify start -l info app.js",
+    "build": "docker build -f ./Dockerfile -t cr.yandex/$(echo $CONTAINER_REGISTRY_ID)/fastify-app .",
     "start-db": "docker compose rm -f && docker compose pull && docker compose up --build -d",
     "db-up": "STAGE=test knex migrate:up",
     "db-make-migration": "knex migrate:latest",
     "dev": "fastify start -w -l info -P app.js",
     "prepare": "husky install",
-    "deploy-api-gw": "fastify start ./scripts/api-gateway.js"
+    "deploy": "node scripts/deploy.js",
+    "deploy-api-gw": "fastify start ./scripts/api-gateway.js",
+    "yc-push-container": "docker push cr.yandex/$(echo $CONTAINER_REGISTRY_ID)/fastify-app"
   },
   "keywords": [],
   "author": "",

@@ -8,7 +8,5 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: true
       MYSQL_DATABASE: bearcar_api
       MYSQL_USER: admin
-    volumes:
-      - /data/mysql:/var/lib/mysql
     ports:
       - '3306:3306'
